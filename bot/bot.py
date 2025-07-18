@@ -16,8 +16,19 @@ async def download_and_convert(url, filename):
     downloaded_file = stream.download(filename='temp_video')
 
     mp3_filename = f"{filename}.mp3"
+
+    ffmpeg_dir = "."
+    try:
+        with open("ffmpeg_path.txt", "r") as f:
+            ffmpeg_dir = f.read().strip()
+    except Exception as e:
+        print(
+            f"Warning: ffmpeg_path.txt not found, using system ffmpeg. Error: {e}")
+
+    ffmpeg_path = os.path.join(ffmpeg_dir, "ffmpeg")
+
     subprocess.run([
-        'ffmpeg', '-y',
+        ffmpeg_path, '-y',
         '-i', downloaded_file,
         '-vn', '-ab', '128k', '-ar', '44100', '-f', 'mp3', mp3_filename
     ])
